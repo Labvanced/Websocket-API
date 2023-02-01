@@ -1,0 +1,7 @@
+asyncio
+jsons
+websockets
+serial
+time
+sys
+glob

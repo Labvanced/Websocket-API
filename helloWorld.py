@@ -1,16 +1,21 @@
 #!/usr/bin/python   
-# Labvanced External Device Synchronization Example.
+# Labvanced Ping-Pong example (send and receive data).
 
 # This server waits to receive a "hello" message from a running experiment.
 # After receiving a "hello" it sends back a "world" message to the running experiment.
 # The received payload variable is bounced back to the running experiment.
 
+# To test this, run this script first and then start the following study on Labvanced https://www.labvanced.com/page/library/4107 
+
 # The following packages must be installed on your system
 import asyncio
 import json
 import websockets
+IP_ADDRESS = 'localhost'
+WEBSOCKET_PORT = 8081
 
 async def on_connect(websocket, path):
+    print("websocket connection established")
     try:
         async for message in websocket:
             data = json.loads(message)
@@ -39,5 +44,5 @@ async def on_connect(websocket, path):
         print("connection lost")
 
 # Make sure that the IP address and port match with the Labvanced study settings.
-asyncio.get_event_loop().run_until_complete(websockets.serve(on_connect, 'localhost', 8081))
+asyncio.get_event_loop().run_until_complete(websockets.serve(on_connect, IP_ADDRESS, WEBSOCKET_PORT))
 asyncio.get_event_loop().run_forever()

@@ -24,7 +24,9 @@ The Labvanced Websocket API can be used to connect a Labvanced study to some ext
 
 ## How to contribute:
 If you already have created a working script that uses our Websocket API, please make a pull request (PR). We are happy to include your work here and credit you for it. This will also help everyone in the community.
+
 If you are planning a new project and need a customized script to connect your device/process, but don't know how to do this, please contact us. We will be happy to guide you along the way.
+
 If your use case is general enough and there are good test cases, we might even help you directly with the implementation. However, this depends on our availability and the generalizability of your use case.
 
 

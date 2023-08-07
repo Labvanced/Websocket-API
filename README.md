@@ -9,6 +9,10 @@ The Labvanced Websocket API can be used to connect a Labvanced study to some ext
  - An experiment where you want to send online recorded data over the internet to some other server/API that processes it (e.g. some AI/ machine learning process or real time data analysis).
  - An experiment where you want to create bidirectional communication between Labvanced and some other process which can run locally or remotely (E.g. for BCI, biofeedback, or other closed-loop systems). 
  
+## Examples:
+There are two folders with examples:
+1. `ping_pong`: This simple hello-world example illustrates how a value (name of the participant) is send from a running labvanced study to a custom python server, which then replies with a customized greeting "Hello {name}" that is then displayed as a stimulus back to the participant.
+2. `serial_port`: This example illustrates how to send triggers from a running labvanced study via serial port to an external device.
  
 ## How to use it:
  1. Setup your study in Labvanced and in the study settings input an IP address and port (where the websocket server should run).

@@ -46,5 +46,6 @@ async def on_connect(websocket, path):
 
 
 # Make sure that the IP address and port match with the Labvanced study settings.
-asyncio.get_event_loop().run_until_complete(websockets.serve(on_connect, IP_ADDRESS, WEBSOCKET_PORT))
-asyncio.get_event_loop().run_forever()
+loop = asyncio.new_event_loop()
+loop.run_forever()
+loop.run_until_complete(websockets.serve(on_connect, IP_ADDRESS, WEBSOCKET_PORT))

@@ -15,7 +15,7 @@ IP_ADDRESS = '0.0.0.0'
 WEBSOCKET_PORT = 8081
 
 
-async def on_connect(websocket, path):
+async def on_connect(websocket):
     print("websocket connection established")
     try:
         async for message in websocket:
@@ -45,7 +45,10 @@ async def on_connect(websocket, path):
         print("connection lost")
 
 
-# Make sure that the IP address and port match with the Labvanced study settings.
-loop = asyncio.new_event_loop()
-loop.run_forever()
-loop.run_until_complete(websockets.serve(on_connect, IP_ADDRESS, WEBSOCKET_PORT))
+# Updated server startup code
+async def main():
+    async with websockets.serve(on_connect, IP_ADDRESS, WEBSOCKET_PORT):
+        await asyncio.Future()  # run forever
+
+if __name__ == "__main__":
+    asyncio.run(main())

@@ -9,6 +9,8 @@
 import asyncio
 import json
 import websockets
+import datetime
+import magic  # You'll need to install python-magic: pip install python-magic
 
 
 IP_ADDRESS = '0.0.0.0'
@@ -19,28 +21,58 @@ async def on_connect(websocket):
     print("websocket connection established")
     try:
         async for message in websocket:
-            data = json.loads(message)
-            # data has two fields 'msg' and 'data'. msg is the trigger / message, value is the variable value, both
-            # defined in the 'send external trigger action' in your Labvanced experiment.
-            received_value = data['value']
-            received_msg = data['msg']
-
-            # here you can make an if-elif for each of your triggers and depending on the type execute different code
-            if received_msg == 'ping':
-                # at this location you could add some code to send a trigger to an external device
-                print("msg = {}, received_value = {}".format(received_msg, received_value))
-
-                # this is how you send messages back to the Labvanced player. Specify a 'msg' field, which can be used
-                # as a trigger and optionally send some data in the 'value' field. Depending on your application this
-                # code can / should be placed at a different location.
-                send_value = f"Hello {received_value}"
-                await websocket.send(json.dumps({'msg': 'pong', 'value': send_value}))
-            elif received_msg == 'anotherTrigger':
-                # do something else here
-                print("another trigger was received")
+            # Check if the message is binary data
+            if isinstance(message, bytes):
+                # Detect file type using magic numbers
+                mime = magic.Magic(mime=True)
+                file_type = mime.from_buffer(message)
+                
+                # Map common MIME types to file extensions
+                extension_map = {
+                    'image/jpeg': '.jpg',
+                    'image/png': '.png',
+                    'image/gif': '.gif',
+                    'image/webp': '.webp',
+                    'video/mp4': '.mp4',
+                    'video/webm': '.webm',
+                    'audio/mpeg': '.mp3',
+                    'audio/wav': '.wav',
+                    'audio/x-wav': '.wav',
+                    'audio/ogg': '.ogg',
+                }
+                
+                # Get file extension or default to .bin if type unknown
+                extension = extension_map.get(file_type, '.bin')
+                
+                # Generate filename with timestamp and proper extension
+                timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+                filename = f"received_file_{timestamp}{extension}"
+                
+                # Save the binary data to a file
+                with open(filename, 'wb') as f:
+                    f.write(message)
+                print(f"Saved {file_type} data to {filename}")
+                
+                # Send confirmation back to client
+                await websocket.send(json.dumps({
+                    'msg': 'file_received',
+                    'value': filename,
+                    'type': file_type
+                }))
             else:
-                # unsupported trigger
-                print("unsupported event: {}".format(data))
+                # Handle JSON messages as before
+                data = json.loads(message)
+                received_value = data['value']
+                received_msg = data['msg']
+
+                if received_msg == 'ping':
+                    print("msg = {}, received_value = {}".format(received_msg, received_value))
+                    send_value = f"Hello {received_value}"
+                    await websocket.send(json.dumps({'msg': 'pong', 'value': send_value}))
+                elif received_msg == 'anotherTrigger':
+                    print("another trigger was received")
+                else:
+                    print("unsupported event: {}".format(data))
     finally:
         print("connection lost")
 

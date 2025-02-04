@@ -4,16 +4,14 @@ import asyncio
 import json
 import websockets
 
-from pylsl import StreamInfo, StreamOutlet
-
-from pylsl.pylsl import cf_string
+from pylsl import StreamInfo, StreamOutlet, cf_string
 
 
 IP_ADDRESS = '0.0.0.0'
 WEBSOCKET_PORT = 8081
 
 
-async def on_connect(websocket, path):
+async def on_connect(websocket):
     print("websocket connection established")
 
     # first create a new stream info (here we set the name to MyMarkerStream,
@@ -45,11 +43,9 @@ async def on_connect(websocket, path):
         print("connection lost")
 
 
-def main():
-    # Make sure that the IP address and port match with the Labvanced study settings.
-    asyncio.get_event_loop().run_until_complete(websockets.serve(on_connect, IP_ADDRESS, WEBSOCKET_PORT))
-    asyncio.get_event_loop().run_forever()
+async def main():
+    async with websockets.serve(on_connect, IP_ADDRESS, WEBSOCKET_PORT):
+        await asyncio.Future()  # run forever
 
-
-if __name__ == '__main__':
-    main()
+if __name__ == "__main__":
+    asyncio.run(main())

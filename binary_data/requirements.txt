@@ -1,0 +1,5 @@
+asyncio == 0.4.1
+jsons
+websockets
+magic
+datetime

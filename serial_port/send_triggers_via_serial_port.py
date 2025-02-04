@@ -18,7 +18,7 @@ IP_ADDRESS = 'localhost'
 WEBSOCKET_PORT = 8081
 
 
-async def on_connect(websocket, path):
+async def on_connect(websocket):
     print("websocket connection established")
     # set up serial port connection
     try:
@@ -95,8 +95,13 @@ if(scan_serial_ports):
         SERIAL_PORT = serial_ports[0]
 
 if SERIAL_PORT:
-    asyncio.get_event_loop().run_until_complete(websockets.serve(on_connect, IP_ADDRESS, WEBSOCKET_PORT))
-    asyncio.get_event_loop().run_forever()
+    # Updated server startup code
+    async def main():
+        async with websockets.serve(on_connect, IP_ADDRESS, WEBSOCKET_PORT):
+            await asyncio.Future()  # run forever
+
+    if __name__ == "__main__":
+        asyncio.run(main())
 else:
     print("no serial port found or specified")
 

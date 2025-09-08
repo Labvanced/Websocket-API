@@ -1,4 +1,3 @@
 asyncio== 0.4.1
 websockets
-serial
-pyserial
+pyparallel
